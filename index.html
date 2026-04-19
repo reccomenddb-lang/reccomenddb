@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommend DB</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Serif+JP:wght@300;400;500;600&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // 高級感のある色合いの定義
+                        'pale-gold': '#FBF9F6', // 白色に近い金色（背景用）
+                        'gold-accent': '#C5A869', // アクセントの金色
+                        'gold-light': '#E8D8A6',
+                        'dark-bg': '#121110',   // 真っ黒ではない深みのあるダーク
+                        'dark-surface': '#1C1A18',
+                        'text-main': '#2A2825',
+                        'text-muted': '#6B655C',
+                        'dark-text-main': '#EAE8E3',
+                        'dark-text-muted': '#A39D96',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', '"Noto Serif JP"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    },
+                    transitionTimingFunction: {
+                        'slow-ease': 'cubic-bezier(0.16, 1, 0.3, 1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* カスタムCSS設定 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* スクロールアニメーション用クラス */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* 画像ホバーエフェクト */
+        .work-card-img {
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .work-card:hover .work-card-img {
+            transform: scale(1.05);
+        }
+        
+        /* カスタムスクロールバー（Webkit） */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A869;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-pale-gold text-text-main dark:bg-dark-bg dark:text-dark-text-main font-sans antialiased overflow-x-hidden selection:bg-gold-accent selection:text-white">
+
+    <!-- ナビゲーションバー -->
+    <header class="fixed w-full top-0 z-50 bg-pale-gold/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-gold-light/30 dark:border-gold-accent/20 transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <!-- ロゴ -->
+            <a href="#" class="font-serif text-2xl tracking-widest text-text-main dark:text-dark-text-main">
+                Recommend DB<span class="text-gold-accent">.</span>
+            </a>
+
+            <!-- デスクトップメニュー -->
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#about" class="text-sm tracking-widest hover:text-gold-accent transition-colors duration-300">ABOUT</a>
+                <a href="#works" class="text-sm tracking-widest hover:text-gold-accent transition-colors duration-300">WORKS</a>
+                <a href="#note" class="text-sm tracking-widest hover:text-gold-accent transition-colors duration-300">NOTE</a>
+                <a href="#contact" class="text-sm tracking-widest hover:text-gold-accent transition-colors duration-300">CONTACT</a>
+                
+                <!-- テーマ切り替えボタン -->
+                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gold-light/20 dark:hover:bg-gold-accent/10 transition-colors duration-300 group" aria-label="Toggle Dark Mode">
+                    <i class="ph ph-sun text-xl text-gold-accent hidden dark:block group-hover:rotate-45 transition-transform duration-500"></i>
+                    <i class="ph ph-moon text-xl text-gold-accent block dark:hidden group-hover:-rotate-12 transition-transform duration-500"></i>
+                </button>
+            </nav>
+
+            <!-- モバイルメニューボタン -->
+            <div class="md:hidden flex items-center gap-4">
+                <button id="theme-toggle-mobile" class="w-8 h-8 flex items-center justify-center">
+                    <i class="ph ph-sun text-xl text-gold-accent hidden dark:block"></i>
+                    <i class="ph ph-moon text-xl text-gold-accent block dark:hidden"></i>
+                </button>
+                <button class="text-2xl text-gold-accent">
+                    <i class="ph ph-list"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- 装飾的な背景要素 -->
+        <div class="absolute top-1/4 left-10 w-64 h-64 bg-gold-accent/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-gold-light/20 dark:bg-gold-accent/5 rounded-full blur-3xl"></div>
+
+        <div class="text-center z-10 px-6">
+            <p class="reveal text-gold-accent tracking-[0.3em] text-sm md:text-base mb-6 font-light">WEB DESIGN & ART DIRECTION</p>
+            <h1 class="reveal delay-100 font-serif text-5xl md:text-7xl lg:text-8xl leading-tight mb-8">
+                Crafting Digital<br>
+                <span class="italic text-gold-accent">Elegance</span>
+            </h1>
+            <p class="reveal delay-200 text-text-muted dark:text-dark-text-muted max-w-2xl mx-auto font-serif text-lg md:text-xl tracking-wide leading-relaxed">
+                美しさと機能が調和する、極上のデジタル体験を創造します。<br>
+                洗練されたデザインで、あなたのブランドに真の価値を。
+            </p>
+            <div class="reveal delay-300 mt-12">
+                <a href="#works" class="inline-flex items-center gap-2 border-b border-gold-accent pb-1 text-sm tracking-widest hover:text-gold-accent transition-colors duration-300">
+                    EXPLORE WORKS
+                    <i class="ph ph-arrow-down-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- アバウトセクション -->
+    <section id="about" class="py-24 md:py-32 bg-white/50 dark:bg-dark-surface/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal relative">
+                    <!-- 写真のプレースホルダー。実際の写真に差し替えてください -->
+                    <div class="aspect-[3/4] w-full max-w-md mx-auto relative group overflow-hidden">
+                        <div class="absolute inset-0 bg-gold-accent/20 z-10 group-hover:opacity-0 transition-opacity duration-700"></div>
+                        <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1000" alt="Designer Portrait" class="w-full h-full object-cover filter grayscale sepia-[.2] dark:sepia-[.1] group-hover:grayscale-0 group-hover:sepia-0 transition-all duration-700">
+                    </div>
+                    <!-- 装飾枠 -->
+                    <div class="absolute -top-4 -right-4 md:right-10 w-24 h-24 border-t border-r border-gold-accent"></div>
+                    <div class="absolute -bottom-4 -left-4 md:left-10 w-24 h-24 border-b border-l border-gold-accent"></div>
+                </div>
+
+                <div class="reveal delay-100">
+                    <h2 class="font-serif text-3xl md:text-5xl mb-8 flex items-center gap-4">
+                        <span class="w-12 h-px bg-gold-accent block"></span>
+                        About the Designer
+                    </h2>
+                    <p class="text-text-muted dark:text-dark-text-muted font-serif leading-loose mb-8 text-lg">
+                        ミニマリズムと優雅さを融合させたデザインを得意とするウェブデザイナー。「見えない部分まで美しく」を信条に、ピクセル単位での調整と滑らかなインタラクションを通じて、ユーザーの心を動かすウェブサイトを構築します。
+                    </p>
+                    <div class="space-y-4">
+                        <h3 class="text-sm tracking-widest text-gold-accent">CORE SKILLS</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 border border-gold-light dark:border-gold-accent/30 rounded-full text-xs tracking-wider">UI/UX DESIGN</span>
+                            <span class="px-4 py-2 border border-gold-light dark:border-gold-accent/30 rounded-full text-xs tracking-wider">ART DIRECTION</span>
+                            <span class="px-4 py-2 border border-gold-light dark:border-gold-accent/30 rounded-full text-xs tracking-wider">FRONTEND DEV</span>
+                            <span class="px-4 py-2 border border-gold-light dark:border-gold-accent/30 rounded-full text-xs tracking-wider">INTERACTION</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ワークスセクション -->
+    <section id="works" class="py-24 md:py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal">
+                <p class="text-gold-accent tracking-[0.3em] text-sm mb-4">PORTFOLIO</p>
+                <h2 class="font-serif text-4xl md:text-5xl">Selected Works</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- プロジェクト 1 -->
+                <a href="#" class="work-card block group reveal">
+                    <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-gray-100 dark:bg-gray-800">
+                        <div class="absolute inset-0 bg-dark-bg/20 group-hover:bg-transparent z-10 transition-colors duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=800" alt="Project 1" class="work-card-img w-full h-full object-cover">
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-xs text-gold-accent tracking-widest mb-2">HOTEL & RESORT</p>
+                            <h3 class="font-serif text-2xl group-hover:text-gold-accent transition-colors duration-300">L'AURA Hotel</h3>
+                        </div>
+                        <i class="ph ph-arrow-up-right text-xl text-text-muted dark:text-dark-text-muted group-hover:text-gold-accent group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300"></i>
+                    </div>
+                </a>
+
+                <!-- プロジェクト 2 -->
+                <a href="#" class="work-card block group reveal delay-100">
+                    <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-gray-100 dark:bg-gray-800">
+                        <div class="absolute inset-0 bg-dark-bg/20 group-hover:bg-transparent z-10 transition-colors duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&q=80&w=800" alt="Project 2" class="work-card-img w-full h-full object-cover">
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-xs text-gold-accent tracking-widest mb-2">FRAGRANCE BRAND</p>
+                            <h3 class="font-serif text-2xl group-hover:text-gold-accent transition-colors duration-300">Maison Blanc</h3>
+                        </div>
+                        <i class="ph ph-arrow-up-right text-xl text-text-muted dark:text-dark-text-muted group-hover:text-gold-accent group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300"></i>
+                    </div>
+                </a>
+
+                <!-- プロジェクト 3 -->
+                <a href="#" class="work-card block group reveal delay-200">
+                    <div class="relative overflow-hidden mb-6 aspect-[4/5] bg-gray-100 dark:bg-gray-800">
+                        <div class="absolute inset-0 bg-dark-bg/20 group-hover:bg-transparent z-10 transition-colors duration-500"></div>
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800" alt="Project 3" class="work-card-img w-full h-full object-cover">
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-xs text-gold-accent tracking-widest mb-2">FASHION EDITORIAL</p>
+                            <h3 class="font-serif text-2xl group-hover:text-gold-accent transition-colors duration-300">Vogue Aesthetic</h3>
+                        </div>
+                        <i class="ph ph-arrow-up-right text-xl text-text-muted dark:text-dark-text-muted group-hover:text-gold-accent group-hover:-translate-y-1 group-hover:translate-x-1 transition-all duration-300"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="text-center mt-16 reveal">
+                <a href="#" class="inline-block px-10 py-4 border border-gold-accent text-gold-accent tracking-widest text-sm hover:bg-gold-accent hover:text-white transition-colors duration-300">
+                    VIEW ALL PROJECTS
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Note / Recommend DB セクション -->
+    <section id="note" class="py-24 md:py-32 bg-white/50 dark:bg-dark-surface/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal">
+                <p class="text-gold-accent tracking-[0.3em] text-sm mb-4">ARTICLES</p>
+                <h2 class="font-serif text-4xl md:text-5xl">Recommend DB</h2>
+                <p class="mt-4 text-text-muted dark:text-dark-text-muted font-serif text-lg">noteにて、デザインの思考やおすすめのツールを発信しています。</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- 記事カード 1 -->
+                <a href="#" class="group block reveal">
+                    <div class="relative overflow-hidden mb-5 aspect-video bg-gray-100 dark:bg-dark-bg">
+                        <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=800" alt="Article 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale-[0.2] sepia-[.1]">
+                        <div class="absolute inset-0 bg-gold-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-[10px] text-gold-accent tracking-widest border border-gold-accent/40 px-2 py-1">NOTE</span>
+                        <time class="text-xs text-text-muted dark:text-dark-text-muted font-serif">2026.04.15</time>
+                    </div>
+                    <h3 class="font-serif text-xl leading-relaxed group-hover:text-gold-accent transition-colors duration-300">
+                        美しさを生み出す、余白の設計学とタイポグラフィの基本
+                    </h3>
+                </a>
+
+                <!-- 記事カード 2 -->
+                <a href="#" class="group block reveal delay-100">
+                    <div class="relative overflow-hidden mb-5 aspect-video bg-gray-100 dark:bg-dark-bg">
+                        <img src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&q=80&w=800" alt="Article 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale-[0.2] sepia-[.1]">
+                        <div class="absolute inset-0 bg-gold-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-[10px] text-gold-accent tracking-widest border border-gold-accent/40 px-2 py-1">NOTE</span>
+                        <time class="text-xs text-text-muted dark:text-dark-text-muted font-serif">2026.03.28</time>
+                    </div>
+                    <h3 class="font-serif text-xl leading-relaxed group-hover:text-gold-accent transition-colors duration-300">
+                        デザイナーのための推薦ツール集「Recommend DB」始動
+                    </h3>
+                </a>
+
+                <!-- 記事カード 3 -->
+                <a href="#" class="group block reveal delay-200">
+                    <div class="relative overflow-hidden mb-5 aspect-video bg-gray-100 dark:bg-dark-bg">
+                        <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800" alt="Article 3" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale-[0.2] sepia-[.1]">
+                        <div class="absolute inset-0 bg-gold-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-[10px] text-gold-accent tracking-widest border border-gold-accent/40 px-2 py-1">NOTE</span>
+                        <time class="text-xs text-text-muted dark:text-dark-text-muted font-serif">2026.03.10</time>
+                    </div>
+                    <h3 class="font-serif text-xl leading-relaxed group-hover:text-gold-accent transition-colors duration-300">
+                        高級感を演出するカラーパレットの作り方と配色比率
+                    </h3>
+                </a>
+            </div>
+
+            <div class="text-center mt-16 reveal">
+                <a href="https://note.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-10 py-4 border border-gold-accent text-gold-accent tracking-widest text-sm hover:bg-gold-accent hover:text-white transition-colors duration-300">
+                    READ MORE ON NOTE
+                    <i class="ph ph-arrow-up-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- コンタクトセクション -->
+    <section id="contact" class="py-24 md:py-32 bg-dark-bg text-dark-text-main relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+        <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+            <h2 class="reveal font-serif text-4xl md:text-5xl mb-6 text-white">Let's Create Together</h2>
+            <p class="reveal delay-100 text-dark-text-muted font-serif text-lg mb-12 max-w-2xl mx-auto">
+                新しいプロジェクトのアイデアはありますか？<br>
+                洗練されたデザインで、あなたのビジョンを形にするお手伝いをいたします。
+            </p>
+            
+            <form class="reveal delay-200 space-y-8 text-left max-w-2xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="border-b border-gold-accent/50 focus-within:border-gold-accent transition-colors">
+                        <label class="block text-xs text-gold-accent tracking-widest mb-2">NAME</label>
+                        <input type="text" class="w-full bg-transparent border-none outline-none text-white pb-2 focus:ring-0 placeholder-gray-600" placeholder="Your Name">
+                    </div>
+                    <div class="border-b border-gold-accent/50 focus-within:border-gold-accent transition-colors">
+                        <label class="block text-xs text-gold-accent tracking-widest mb-2">EMAIL</label>
+                        <input type="email" class="w-full bg-transparent border-none outline-none text-white pb-2 focus:ring-0 placeholder-gray-600" placeholder="your@email.com">
+                    </div>
+                </div>
+                <div class="border-b border-gold-accent/50 focus-within:border-gold-accent transition-colors">
+                    <label class="block text-xs text-gold-accent tracking-widest mb-2">MESSAGE</label>
+                    <textarea rows="4" class="w-full bg-transparent border-none outline-none text-white pb-2 focus:ring-0 placeholder-gray-600 resize-none" placeholder="Tell me about your project..."></textarea>
+                </div>
+                <div class="text-center pt-8">
+                    <button type="button" class="px-12 py-4 bg-gold-accent text-white tracking-widest text-sm hover:bg-white hover:text-gold-accent transition-colors duration-300">
+                        SEND MESSAGE
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="py-10 border-t border-gold-light/30 dark:border-dark-surface bg-pale-gold dark:bg-dark-bg transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="font-serif text-xl tracking-widest">
+                Recommend DB<span class="text-gold-accent">.</span>
+            </div>
+            
+            <div class="flex gap-6">
+                <a href="#" class="text-text-muted hover:text-gold-accent dark:text-dark-text-muted dark:hover:text-gold-accent transition-colors">
+                    <i class="ph ph-instagram-logo text-2xl"></i>
+                </a>
+                <a href="#" class="text-text-muted hover:text-gold-accent dark:text-dark-text-muted dark:hover:text-gold-accent transition-colors">
+                    <i class="ph ph-dribbble-logo text-2xl"></i>
+                </a>
+                <a href="#" class="text-text-muted hover:text-gold-accent dark:text-dark-text-muted dark:hover:text-gold-accent transition-colors">
+                    <i class="ph ph-behance-logo text-2xl"></i>
+                </a>
+            </div>
+
+            <div class="text-xs tracking-widest text-text-muted dark:text-dark-text-muted">
+                &copy; 2026 Recommend DB. ALL RIGHTS RESERVED.
+            </div>
+        </div>
+    </footer>
+
+    <!-- スクリプト -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- ダークモード切り替えロジック ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
+            const htmlElement = document.documentElement;
+
+            // 初期テーマの設定 (localStorage または OSの設定)
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlElement.classList.add('dark');
+            } else {
+                htmlElement.classList.remove('dark');
+            }
+
+            const toggleTheme = () => {
+                if (htmlElement.classList.contains('dark')) {
+                    htmlElement.classList.remove('dark');
+                    localStorage.theme = 'light';
+                } else {
+                    htmlElement.classList.add('dark');
+                    localStorage.theme = 'dark';
+                }
+            };
+
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            themeToggleMobileBtn.addEventListener('click', toggleTheme);
+
+
+            // --- スクロールアニメーション (Intersection Observer) ---
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('active');
+                        // 一度表示されたら監視を解除する場合
+                        // observer.unobserve(entry.target); 
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealOnScroll.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
